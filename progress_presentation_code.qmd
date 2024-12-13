@@ -1,0 +1,83 @@
+---
+title: "Stat 184 Work-In-Progress"
+format: html
+editor: visual
+author: "John Seifarth and Bryson Davis"
+---
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(esquisse)
+```
+
+```{r}
+bankData <- read.csv("C:\\Users\\jsei8\\Downloads\\archive\\Customer-Churn-Records.csv")
+
+bankDataClean <- bankData %>%
+  select(CustomerId, CreditScore, Geography, Gender, Balance, NumOfProducts, EstimatedSalary)
+
+head(bankDataClean)
+```
+
+```{r}
+ggplot(bankDataClean) +
+  aes(x = "", y = CreditScore, fill = Geography) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "RdYlGn", direction = 1) +
+  labs(
+    x = "Country",
+    y = "Credit Score",
+    title = "Credit Score by Country"
+  ) +
+  theme_minimal() +
+  facet_wrap(vars(Geography))
+```
+
+```{r}
+ggplot(bankDataClean) +
+  aes(x = "", y = CreditScore, fill = Gender, group = Gender) +
+  geom_boxplot() +
+  scale_fill_hue(direction = 1) +
+  labs(
+    x = "Gender",
+    y = "Credit Score",
+    title = "Credit Score by Gender"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+ggplot(bankDataClean) +
+  aes(
+    x = "",
+    y = CreditScore,
+    fill = NumOfProducts,
+    group = NumOfProducts
+  ) +
+  geom_boxplot() +
+  scale_fill_gradient() +
+  labs(
+    x = "Number of Products",
+    y = "Credit Score",
+    title = "Credit Score by Number of Products"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+creditSalaryModel <- lm(EstimatedSalary ~ CreditScore, data = bankDataClean)
+summary(creditSalaryModel)
+
+ggplot(bankDataClean) +
+  aes(x = EstimatedSalary, y = CreditScore) +
+  geom_smooth(method = "lm", color = "red", se = FALSE) +
+  geom_point(shape = "circle open", colour = "#769DE4", size = 0.5) +
+  labs(
+    x = "Estimated Salary (Euros)",
+    y = "Credit Score",
+    title = "Credit Score as a Function of Salary"
+  ) +
+  theme_minimal()
+
+```
